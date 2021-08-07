@@ -13,7 +13,7 @@
 #include <string.h>
 #include <ctype.h>
 
-// Declaracoes de Tipos
+// Declarações de Tipos
 struct tAluno {
     int matricula;
     char nome[20];
@@ -21,31 +21,79 @@ struct tAluno {
     char turma;
 };
 
+struct tNo {
+    struct tAluno dado;
+    struct tNo *prox;
+};
 
-// Prototipos
+
+// Protótipos
+
+char menuPrincipal(void);
+
 struct tAluno receberDadosAluno(void);
 void listarAluno(struct tAluno, char);
 
 int main(int argc, const char * argv[]) {
-// Declaracoes
+// Declarações
+    char opcaoMenuPrincipal = '1';
+    
+    
     struct tAluno aluno;
     
-    //add aluno
-    aluno = receberDadosAluno();
-    listarAluno(aluno, 's');
-    listarAluno(aluno, 'n');
+    // início da lista
+    struct tNo *lista = NULL;
     
-// Instrucoes
+    // elemento/ponteiro auxiliar
+    struct tNo *p;
     
     
+    
+// Instruções
+    do{
+        opcaoMenuPrincipal = menuPrincipal();
+        
+        //add aluno
+        aluno = receberDadosAluno();
+        
+        //listar aluno
+        listarAluno(aluno, 's');
+        listarAluno(aluno, 'n');
+        
+        //lista encadeada de alunos
+        p = malloc(sizeof(struct tNo));
+        
+        p->dado = aluno;                 // p recebe os dados do aluno atual
+        p->prox = lista;                 // p passa a apontar para onde a lista estava apontando, início anterior
+        
+        lista = p;
+    
+    }while(opcaoMenuPrincipal != 's');
     
     printf("\n\n\n");
     return 0;
 }
 
 
-// FUncoes
-
+// FUnções
+char menuPrincipal(){
+    char opcao = '1';
+    
+    printf("\n### MENU PRINCIPAL ###\n");
+    do{
+        printf("\n1) Cadastrar aluno;");
+        printf("\n2) Listar alunos;");
+        printf("\nS) Sair;");
+        printf("OPCAO: ");
+        fflush(stdin);
+        scanf("%c", &opcao);
+        if(opcao != '1' && opcao != '2' && (opcao != 's' || opcao != 'S')){
+            printf("\nOpcao invalida!");
+        }
+    }while(opcao != '1' && opcao != '2' && (opcao != 's' || opcao != 'S'));
+    
+    return opcao;
+}
 // Factories
 
 struct tAluno receberDadosAluno(void){
