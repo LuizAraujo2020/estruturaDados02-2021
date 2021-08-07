@@ -53,29 +53,75 @@ int main(int argc, const char * argv[]) {
     do{
         opcaoMenuPrincipal = menuPrincipal();
         
-        //add aluno
-        aluno = receberDadosAluno();
+        switch (opcaoMenuPrincipal) {
+            case '1':
+                printf("\n## CADASTRAR ALUNO");
+                
+                //add aluno
+                aluno = receberDadosAluno();
+                
+                
+                
+                //lista encadeada de alunos
+                p = malloc(sizeof(struct tNo));
+                
+                p->dado = aluno;                 // p recebe os dados do aluno atual
+                p->prox = lista;                 // p passa a apontar para onde a lista estava apontando, início anterior
+                lista = p;
+                
+                
+                
+                
+                break;
+            case '2':
+                if(lista != NULL) {
+                    printf("\n## LISTAR ALUNO ##\n");
+                    printf("\n%-5s   %-20s   %s", "MAT", "NOME DO ALUNO", "SERIE/TURMA");
+                    
+                    struct tNo *aux = lista;
+                    listarAluno(p->dado, 's');
+                    while(aux->prox != NULL){
+                        aux = aux->prox;
+                        listarAluno(aux->dado, 's');
+//                        listarAluno(p->dado, 'n');
+//                        aux = aux->prox;
+                    };
+                    printf("\n\n");
+                    
+                } else {
+                    printf("\n## NENHUM ALUNO CADASTRADO!\n");
+                }
+                break;
+            case 's':
+            case 'S':
+                printf("\n## ENCERRANDO PROGRAMA");
+                
+                
+                break;
+        }
         
-        //listar aluno
-        listarAluno(aluno, 's');
-        listarAluno(aluno, 'n');
         
-        //lista encadeada de alunos
-        p = malloc(sizeof(struct tNo));
-        
-        p->dado = aluno;                 // p recebe os dados do aluno atual
-        p->prox = lista;                 // p passa a apontar para onde a lista estava apontando, início anterior
-        
-        lista = p;
     
-    }while(opcaoMenuPrincipal != 's');
+    }while(opcaoMenuPrincipal != 's' && opcaoMenuPrincipal != 'S');
     
+    //free pointers
+    
+    struct tNo *aux = lista;
+    
+    if(lista != NULL){
+        do{
+            p = aux;
+            free(p);
+            aux = aux->prox;
+        }while(aux->prox != NULL);
+    }
     printf("\n\n\n");
+        
     return 0;
 }
 
 
-// FUnções
+// Funções
 char menuPrincipal(){
     char opcao = '1';
     
@@ -83,17 +129,21 @@ char menuPrincipal(){
     do{
         printf("\n1) Cadastrar aluno;");
         printf("\n2) Listar alunos;");
-        printf("\nS) Sair;");
-        printf("OPCAO: ");
+        printf("\nS) Encerrar");
+        printf("\nOPCAO: ");
         fflush(stdin);
         scanf("%c", &opcao);
-        if(opcao != '1' && opcao != '2' && (opcao != 's' || opcao != 'S')){
+        if(opcao != '1' && opcao != '2' && opcao != 's' && opcao != 'S'){
             printf("\nOpcao invalida!");
         }
-    }while(opcao != '1' && opcao != '2' && (opcao != 's' || opcao != 'S'));
+    }while(opcao != '1' && opcao != '2' && opcao != 's' && opcao != 'S');
     
     return opcao;
 }
+
+
+
+
 // Factories
 
 struct tAluno receberDadosAluno(void){
@@ -123,8 +173,7 @@ struct tAluno receberDadosAluno(void){
 void listarAluno(struct tAluno aluno, char formatoLista){
     
     if(formatoLista == 's') {
-        printf("%-5s   %-20s   %s", "MAT", "NOME DO ALUNO", "SERIE/TURMA\n");
-        printf("%05d   %-20s   %d%c", aluno.matricula, aluno.nome, aluno.serie, aluno.turma);
+        printf("\n%05d   %-20s   %d%c", aluno.matricula, aluno.nome, aluno.serie, aluno.turma);
     } else {
         printf("\nMAT. : %05d", aluno.matricula);
         printf("\nNOME : %-20s", aluno.nome);
