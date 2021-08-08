@@ -13,7 +13,9 @@
 #include <string.h>
 #include <ctype.h>
 
-// Declarações de Tipos
+
+//##############################################################################
+//MARK: - Declarações de Tipos
 struct tAluno {
     int matricula;
     char nome[20];
@@ -27,12 +29,20 @@ struct tNo {
 };
 
 
-// Protótipos
+//##############################################################################
+//MARK: - Protótipos
 
 char menuPrincipal(void);
 
-struct tAluno receberDadosAluno(void);
+struct tAluno receberDadosAluno(struct tNo *inicio);
 void listarAluno(struct tAluno, char);
+// Entradas com validações
+int atribuirMatricula(struct tNo *inicio);
+
+
+// Utils
+struct tNo* retornarPrimeiroNo(struct tNo *inicio);
+struct tNo* retornarUltimoNo(struct tNo *inicio);
 
 int main(int argc, const char * argv[]) {
 // Declarações
@@ -55,21 +65,18 @@ int main(int argc, const char * argv[]) {
         
         switch (opcaoMenuPrincipal) {
             case '1':
-                printf("\n## CADASTRAR ALUNO");
+                printf("\n## CADASTRAR ALUNO\n");
                 
                 //add aluno
-                aluno = receberDadosAluno();
-                
-                
+                aluno = receberDadosAluno(lista);
                 
                 //lista encadeada de alunos
                 p = malloc(sizeof(struct tNo));
                 
                 p->dado = aluno;                 // p recebe os dados do aluno atual
                 p->prox = lista;                 // p passa a apontar para onde a lista estava apontando, início anterior
+                
                 lista = p;
-                
-                
                 
                 
                 break;
@@ -120,8 +127,19 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+//##############################################################################
+//MARK: - FUNÇÕES
 
-// Funções
+
+
+
+
+
+
+/*
+ Menus
+ */
+
 char menuPrincipal(){
     char opcao = '1';
     
@@ -144,18 +162,21 @@ char menuPrincipal(){
 
 
 
-// Factories
-
-struct tAluno receberDadosAluno(void){
+//##############################
+//MARK: - Factories
+/*
+ Alunos
+ */
+struct tAluno receberDadosAluno(struct tNo *inicio) {
     
     struct tAluno aluno;
     
-    printf("### INCLUIR ALUNO ###\n");
-    
-    printf("\nMAT. : ");
-    scanf("%d", &aluno.matricula);
-    
-    printf("NOME : ");
+    if(inicio == NULL){
+        aluno.matricula = 0;
+    } else {
+        aluno.matricula = atribuirMatricula(inicio);
+    }
+    printf("\nNOME : ");
     fflush(stdin);
     gets(aluno.nome);
     
@@ -169,6 +190,72 @@ struct tAluno receberDadosAluno(void){
     
     return aluno;
 }
+
+/*
+ Entradas & validações
+ */
+
+int atribuirMatricula(struct tNo *inicio) {
+    int novaMatricula = 1;
+    
+    struct tNo *aux = inicio;
+    
+    while(aux->prox != NULL){
+        aux = aux->prox;
+        novaMatricula++;// Tive que fazer incrementando baseado na qtd de elementos porque não estava passando da mat. 1
+//        printf("\n\nDentro matricula: %d\n\n", novaMatricula);
+    };
+    
+    return novaMatricula;
+}
+
+
+
+
+// Fim Factories
+//##############################
+
+
+//##############################
+//MARK: - Utils
+
+//Achar o primeiro nó. inicio = ponteiro para o primeiro nó
+struct tNo* retornarPrimeiroNo(struct tNo *inicio) {
+    struct tNo *no;
+    
+    no = inicio;
+    
+    return no;
+}
+
+//Achar o último nó
+struct tNo* retornarUltimoNo(struct tNo *inicio) {
+    struct tNo *p = inicio;
+    
+    printf("\n\nMatricula dentro do while: %d", p->dado.matricula);
+    printf("\nNome dentro do while: %s\n\n", p->dado.nome);
+    while(p->prox != NULL){
+        printf("\n\nMatricula dentro do while: %d", p->dado.matricula);
+        printf("\nNome dentro do while: %s\n\n", p->dado.nome);
+        p = p->prox;
+    };
+    
+    printf("\n\nUltimo nó matricula: %d\n\n", p->dado.matricula);
+    
+    return p;
+}
+
+//Achar a última matrícula
+//int ultimaMatrícula(void) {
+//    int ultimaMatrícula;
+//    struct tNo ultimoNo = ultimoNo();
+//
+//
+//
+//    return ultimaMatrícula;
+//}
+
+
 
 void listarAluno(struct tAluno aluno, char formatoLista){
     
