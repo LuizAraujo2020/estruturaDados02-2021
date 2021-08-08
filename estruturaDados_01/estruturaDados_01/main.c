@@ -38,6 +38,7 @@ struct tAluno receberDadosAluno(struct tNo *inicio);
 void listarAluno(struct tAluno, char);
 // Entradas com validações
 int atribuirMatricula(struct tNo *inicio);
+char receberValidarNome(void);
 
 
 // Utils
@@ -111,19 +112,21 @@ int main(int argc, const char * argv[]) {
     
     }while(opcaoMenuPrincipal != 's' && opcaoMenuPrincipal != 'S');
     
-    //free pointers
-    
-    struct tNo *aux = lista;
-    
-    if(lista != NULL){
+    /*
+     Liberar as alocações
+     */
+    if(lista != NULL){                  // Checa se a lista não está vazia
+        struct tNo *aux;
+        p = lista;
         do{
-            p = aux;
-            free(p);
-            aux = aux->prox;
-        }while(aux->prox != NULL);
+            aux = p;
+            p = p->prox;
+            free(aux);
+        }while(p != NULL);              /// Checa se o novo local é NULL
     }
+    
+    
     printf("\n\n\n");
-        
     return 0;
 }
 
@@ -168,6 +171,7 @@ char menuPrincipal(){
  Alunos
  */
 struct tAluno receberDadosAluno(struct tNo *inicio) {
+    char ok = 's';
     
     struct tAluno aluno;
     
@@ -176,9 +180,22 @@ struct tAluno receberDadosAluno(struct tNo *inicio) {
     } else {
         aluno.matricula = atribuirMatricula(inicio);
     }
-    printf("\nNOME : ");
-    fflush(stdin);
-    gets(aluno.nome);
+    
+//    strcpy(aluno.nome, receberValidarNome());
+    
+    do{
+        printf("\nNOME : ");
+        fflush(stdin);
+        gets(aluno.nome);
+        
+        if((strcmp(aluno.nome, " ") == 0) || (strcmp(aluno.nome, "") == 0) || (strlen(aluno.nome) < 3)){
+            printf("\nNome invalido!\n");
+            ok = 'n';
+        } else {
+            ok = 's';
+        }
+        
+    }while(ok != 's');
     
     printf("\nSERIE: ");
     scanf("%d", &aluno.serie);
@@ -207,6 +224,24 @@ int atribuirMatricula(struct tNo *inicio) {
     };
     
     return novaMatricula;
+}
+
+char receberValidarNome(void){
+    char nome[20], ok = 's';
+    
+    do{
+        printf("\nNOME : ");
+        fflush(stdin);
+        gets(nome);
+        
+        if((strcmp(nome, " ") == 0) || (strcmp(nome, "") == 0) || (strlen(nome) < 3)){
+            printf("\nNome invalido!\n");
+            ok = 'n';
+        }
+        
+    }while(ok != 's');
+    
+    return nome;
 }
 
 
